@@ -1,0 +1,11 @@
+# core
+pytest>=7.2
+regex>=2023.8.8
+
+# optional / heavy (only needed if you want advanced adversarial testing)
+# TextAttack is heavy—uncomment to use fuzzing via TextAttack in fuzz_harness.py
+textattack>=0.4.3
+
+# small ML hooks (optional; used only if you replace regex detector with a classifier)
+scikit-learn>=1.2
+joblib>=1.3
