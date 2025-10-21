@@ -9,29 +9,21 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.10]
-
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-    - name: Install deps
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          # Ensure lightweight runtime deps are present if tests import transformers
+          pip install transformers sentencepiece --no-cache-dir || true
 
-    - name: Run tests
-      run: |
-        pytest -q --maxfail=1
-
-    # Optional: run light fuzz only if textattack installed
-    - name: Optional: Run fuzz harness (TextAttack)
-      if: false   # set to true manually when TextAttack is available and you want the heavy job
-      run: |
-        python -m fuzz.fuzz_harness
+      - name: Run tests
+        env:
+          TOKENIZERS_PARALLELISM: "false"
+        run: pytest -q --maxfail=1
